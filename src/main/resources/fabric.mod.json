@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "id": "ttc",
+  "version": "${version}",
+
+  "name": "Tiny Trash Can",
+  "description": "Adds a simple little trash can to Minecraft. Lava pits are a thing of the past!",
+  "authors": [
+    {
+      "name": "thegiggitybyte (Luke Triano)",
+      "contact": {
+        "discord": "https://discord.gg/4azQScKG3q"
+      }
+    },
+    {
+      "name": "Draylar",
+      "contact": {
+        "sources": "https://github.com/Draylar/trash-it"
+      }
+    }
+  ],
+
+  "contact": {
+    "discord": "https://discord.gg/4azQScKG3q",
+    "sources": "https://github.com/Giggitybyte/tiny-trash-can"
+  },
+
+  "license": "GNU GPL V3",
+  "icon": "assets/ttc/icon.png",
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "me.thegiggitybyte.ttc.TinyTrashCan"
+    ],
+    "client": [
+      "me.thegiggitybyte.ttc.TinyTrashCan"
+    ]
+  },
+
+  "depends": {
+    "fabricloader": ">=0.7.4",
+    "fabric": "*",
+    "minecraft": "1.16.x"
+  }
+}
