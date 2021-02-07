@@ -34,7 +34,10 @@ public class TrashCanBlock extends BlockWithEntity implements BlockEntityProvide
             
             if (screenHandlerFactory != null) {
                 player.openHandledScreen(screenHandlerFactory);
-                world.playSound(null, pos, SoundEvents.BLOCK_IRON_TRAPDOOR_OPEN, SoundCategory.BLOCKS, 1, 1);
+                world.playSound(null, pos,
+                        SoundEvents.BLOCK_IRON_TRAPDOOR_OPEN,
+                        SoundCategory.BLOCKS,
+                        0.9f, 1.3f);
             }
         }
         

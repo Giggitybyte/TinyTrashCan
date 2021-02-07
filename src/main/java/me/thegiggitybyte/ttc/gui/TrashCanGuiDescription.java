@@ -69,11 +69,19 @@ public class TrashCanGuiDescription extends SyncedGuiDescription {
             
             world.playSound(null, player.getBlockPos(),
                     SoundEvents.BLOCK_COMPOSTER_READY,
-                    SoundCategory.PLAYERS, 0.4f, 0.85f);
+                    SoundCategory.PLAYERS, 0.5f, 0.8f);
             
             return ItemStack.EMPTY;
         } else {
             return super.onSlotClick(slotIndex, button, action, player);
         }
+    }
+    
+    @Override
+    public void close(PlayerEntity player) {
+        super.close(player);
+        world.playSound(null, player.getBlockPos(),
+                SoundEvents.BLOCK_IRON_TRAPDOOR_CLOSE,
+                SoundCategory.BLOCKS, 0.9f, 1.3f);
     }
 }

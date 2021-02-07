@@ -28,7 +28,7 @@
     "issues": "https://github.com/Giggitybyte/TinyTrashCan/issues"
   },
 
-  "license": "GNU GPL V3",
+  "license": "MPL 2.0",
   "icon": "assets/ttc/icon.png",
 
   "environment": "*",
