@@ -50,7 +50,7 @@ public class TrashCanGuiDescription extends SyncedGuiDescription {
                 wasItemDeleted = true;
             }
             
-        } else if (action == SlotActionType.QUICK_MOVE) { // Shift-click.
+        } else if ((action == SlotActionType.QUICK_MOVE) && (slotIndex != 0)) { // Shift-click.
             Slot selectedSlot = this.slots.get(slotIndex);
             ItemStack selectedStack = selectedSlot.getStack();
             
