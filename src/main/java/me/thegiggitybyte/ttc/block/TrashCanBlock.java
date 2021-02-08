@@ -36,8 +36,7 @@ public class TrashCanBlock extends BlockWithEntity implements BlockEntityProvide
                 player.openHandledScreen(screenHandlerFactory);
                 world.playSound(null, pos,
                         SoundEvents.BLOCK_IRON_TRAPDOOR_OPEN,
-                        SoundCategory.BLOCKS,
-                        0.9f, 1.3f);
+                        SoundCategory.BLOCKS, 0.9f, 1.3f);
             }
         }
         

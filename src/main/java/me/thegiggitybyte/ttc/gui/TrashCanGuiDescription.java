@@ -7,7 +7,9 @@ import io.github.cottonmc.cotton.gui.widget.WLabel;
 import me.thegiggitybyte.ttc.TinyTrashCan;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.screen.ScreenHandlerContext;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
@@ -37,30 +39,12 @@ public class TrashCanGuiDescription extends SyncedGuiDescription {
     @Override
     public ItemStack onSlotClick(int slotIndex, int button, SlotActionType action, PlayerEntity player) {
         Slot trashSlot = this.slots.get(0);
-        ItemStack trashSlotStack = trashSlot.getStack();
         boolean wasItemDeleted = false;
         
         if ((slotIndex == 0) && ((action == SlotActionType.PICKUP) & (button == 0))) {
-            ItemStack cursorStack = player.inventory.getCursorStack();
-            
-            if (!cursorStack.isEmpty() && !trashSlotStack.isEmpty()) {
-                trashSlot.setStack(cursorStack);
-                player.inventory.setCursorStack(ItemStack.EMPTY);
-                
-                wasItemDeleted = true;
-            }
-            
+            wasItemDeleted = tryCursorDelete(trashSlot, player);
         } else if ((action == SlotActionType.QUICK_MOVE) && (slotIndex != 0)) { // Shift-click.
-            Slot selectedSlot = this.slots.get(slotIndex);
-            ItemStack selectedStack = selectedSlot.getStack();
-            
-            if (!trashSlotStack.isEmpty() && !selectedStack.isEmpty()) {
-                trashSlot.setStack(selectedStack);
-                selectedSlot.setStack(ItemStack.EMPTY);
-                
-                selectedSlot.markDirty();
-                wasItemDeleted = true;
-            }
+            wasItemDeleted = tryQuickDelete(trashSlot, this.slots.get(slotIndex));
         }
         
         if (wasItemDeleted) {
@@ -83,5 +67,84 @@ public class TrashCanGuiDescription extends SyncedGuiDescription {
         world.playSound(null, player.getBlockPos(),
                 SoundEvents.BLOCK_IRON_TRAPDOOR_CLOSE,
                 SoundCategory.BLOCKS, 0.9f, 1.3f);
+    }
+    
+    private boolean tryCursorDelete(Slot trashSlot, PlayerEntity player) {
+        ItemStack cursorStack = player.inventory.getCursorStack();
+        ItemStack trashStack = trashSlot.getStack();
+        
+        if (cursorStack.isEmpty() | trashStack.isEmpty() |
+                trashStack.getItem() == Items.AIR) {
+            return false;
+        }
+        
+        if (canStacksCombine(cursorStack, trashStack)) {
+            if (trashStack.getCount() >= trashStack.getMaxCount()) {
+                trashSlot.setStack(cursorStack);
+                player.inventory.setCursorStack(ItemStack.EMPTY);
+                
+                return true;
+            }
+            
+            Item stackItem = trashStack.getItem();
+            int maxStackCount = stackItem.getMaxCount();
+            
+            int combinedStackCount = cursorStack.getCount() + trashStack.getCount();
+            if (combinedStackCount > maxStackCount) {
+                int remainder = combinedStackCount - maxStackCount;
+                
+                trashSlot.setStack(new ItemStack(stackItem, maxStackCount));
+                player.inventory.setCursorStack(new ItemStack(stackItem, remainder));
+            }
+            
+            return false;
+            
+        } else {
+            trashSlot.setStack(cursorStack);
+            player.inventory.setCursorStack(ItemStack.EMPTY);
+            
+            return true;
+        }
+    }
+    
+    private boolean tryQuickDelete(Slot trashSlot, Slot originSlot) {
+        ItemStack originStack = originSlot.getStack();
+        ItemStack trashStack = trashSlot.getStack();
+        
+        if (originStack.isEmpty() | trashStack.isEmpty() |
+                trashStack.getItem() == Items.AIR) {
+            return false;
+        }
+        
+        if (canStacksCombine(originStack, trashStack)) {
+            if (trashStack.getCount() >= trashStack.getMaxCount()) {
+                trashSlot.setStack(originStack);
+                originSlot.setStack(ItemStack.EMPTY);
+                originSlot.markDirty();
+                
+                return true;
+            }
+            
+            Item stackItem = trashStack.getItem();
+            int maxStackCount = stackItem.getMaxCount();
+            
+            int combinedStackCount = originStack.getCount() + trashStack.getCount();
+            if (combinedStackCount > maxStackCount) {
+                int remainder = combinedStackCount - maxStackCount;
+                
+                trashSlot.setStack(new ItemStack(stackItem, maxStackCount));
+                originSlot.setStack(new ItemStack(stackItem, remainder));
+                originSlot.markDirty();
+            }
+            
+            return false;
+            
+        } else {
+            trashSlot.setStack(originStack);
+            originSlot.setStack(ItemStack.EMPTY);
+            originSlot.markDirty();
+            
+            return true;
+        }
     }
 }
