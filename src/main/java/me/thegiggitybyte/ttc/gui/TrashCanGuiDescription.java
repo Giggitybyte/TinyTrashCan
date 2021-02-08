@@ -39,15 +39,15 @@ public class TrashCanGuiDescription extends SyncedGuiDescription {
     @Override
     public ItemStack onSlotClick(int slotIndex, int button, SlotActionType action, PlayerEntity player) {
         Slot trashSlot = this.slots.get(0);
-        boolean wasItemDeleted = false;
+        boolean itemWasDeleted = false;
         
         if ((slotIndex == 0) && ((action == SlotActionType.PICKUP) & (button == 0))) {
-            wasItemDeleted = tryCursorDelete(trashSlot, player);
+            itemWasDeleted = tryCursorDelete(trashSlot, player);
         } else if ((action == SlotActionType.QUICK_MOVE) && (slotIndex != 0)) { // Shift-click.
-            wasItemDeleted = tryQuickDelete(trashSlot, this.slots.get(slotIndex));
+            itemWasDeleted = tryQuickDelete(trashSlot, this.slots.get(slotIndex));
         }
         
-        if (wasItemDeleted) {
+        if (itemWasDeleted) {
             trashSlot.markDirty();
             player.inventory.markDirty();
             
