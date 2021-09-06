@@ -50,6 +50,6 @@ public class TinyTrashCan implements ModInitializer, ClientModInitializer {
     
     static {
         TRASH_CAN_BLOCK = new TrashCanBlock(FabricBlockSettings.of(Material.STONE).hardness(2.0f).nonOpaque());
-        TRASH_CAN_ITEM = new BlockItem(TRASH_CAN_BLOCK, new Item.Settings().group(ItemGroup.DECORATIONS));
+        TRASH_CAN_ITEM = new BlockItem(TRASH_CAN_BLOCK, new Item.Settings().group(ItemGroup.DECORATIONS).maxCount(16));
     }
 }
