@@ -23,8 +23,8 @@ public class TrashCanBlock extends BlockWithEntity implements BlockEntityProvide
     }
     
     @Override
-    public BlockEntity createBlockEntity(BlockView world) {
-        return new TrashCanBlockEntity();
+    public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+        return new TrashCanBlockEntity(pos, state);
     }
     
     @Override

@@ -9,19 +9,20 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenHandlerContext;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.collection.DefaultedList;
+import net.minecraft.util.math.BlockPos;
 
 public class TrashCanBlockEntity extends BlockEntity implements TrashCanInventory, NamedScreenHandlerFactory {
     private final DefaultedList<ItemStack> items = DefaultedList.ofSize(1, ItemStack.EMPTY);
     
-    public TrashCanBlockEntity() {
-        super(TinyTrashCan.TRASH_CAN_BLOCK_ENTITY);
+    public TrashCanBlockEntity(BlockPos pos, BlockState state) {
+        super(TinyTrashCan.TRASH_CAN_BLOCK_ENTITY, pos, state);
     }
     
     @Override
@@ -46,14 +47,14 @@ public class TrashCanBlockEntity extends BlockEntity implements TrashCanInventor
     }
     
     @Override
-    public void fromTag(BlockState state, CompoundTag tag) {
-        super.fromTag(state, tag);
-        Inventories.fromTag(tag, items);
+    public void readNbt(NbtCompound tag) {
+        super.readNbt(tag);
+        Inventories.readNbt(tag, items);
     }
     
     @Override
-    public CompoundTag toTag(CompoundTag tag) {
-        Inventories.toTag(tag, items);
-        return super.toTag(tag);
+    public NbtCompound writeNbt(NbtCompound tag) {
+        Inventories.writeNbt(tag, items);
+        return super.writeNbt(tag);
     }
 }

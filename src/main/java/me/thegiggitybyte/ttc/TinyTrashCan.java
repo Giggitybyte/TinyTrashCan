@@ -8,6 +8,7 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.screenhandler.v1.ScreenRegistry;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
+import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry;
 import net.minecraft.block.Material;
 import net.minecraft.block.entity.BlockEntityType;
@@ -34,8 +35,8 @@ public class TinyTrashCan implements ModInitializer, ClientModInitializer {
         Registry.register(Registry.BLOCK, id, TRASH_CAN_BLOCK);
         Registry.register(Registry.ITEM, id, TRASH_CAN_ITEM);
         
-        BlockEntityType<TrashCanBlockEntity> trashCanEntityEntry = BlockEntityType.Builder.create(TrashCanBlockEntity::new, TRASH_CAN_BLOCK).build(null);
-        TRASH_CAN_BLOCK_ENTITY = Registry.register(Registry.BLOCK_ENTITY_TYPE, id, trashCanEntityEntry);
+        BlockEntityType<TrashCanBlockEntity> trashCanBlockEntity = FabricBlockEntityTypeBuilder.create(TrashCanBlockEntity::new, TRASH_CAN_BLOCK).build(null);
+        TRASH_CAN_BLOCK_ENTITY = Registry.register(Registry.BLOCK_ENTITY_TYPE, id, trashCanBlockEntity);
         
         TRASH_CAN_SCREEN_HANDLER = ScreenHandlerRegistry.registerSimple(id, (s, i) -> new TrashCanGuiDescription(s, i, ScreenHandlerContext.EMPTY));
     }

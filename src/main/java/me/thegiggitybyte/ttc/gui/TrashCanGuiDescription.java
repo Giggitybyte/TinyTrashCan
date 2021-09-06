@@ -4,6 +4,7 @@ import io.github.cottonmc.cotton.gui.SyncedGuiDescription;
 import io.github.cottonmc.cotton.gui.widget.WGridPanel;
 import io.github.cottonmc.cotton.gui.widget.WItemSlot;
 import io.github.cottonmc.cotton.gui.widget.WLabel;
+import io.github.cottonmc.cotton.gui.widget.data.Insets;
 import me.thegiggitybyte.ttc.TinyTrashCan;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -22,12 +23,14 @@ public class TrashCanGuiDescription extends SyncedGuiDescription {
     public TrashCanGuiDescription(int syncId, PlayerInventory playerInventory, ScreenHandlerContext context) {
         super(TinyTrashCan.TRASH_CAN_SCREEN_HANDLER, syncId, playerInventory, getBlockInventory(context, 1), getBlockPropertyDelegate(context));
         
-        WLabel title = new WLabel(new TranslatableText("block.ttc.trash_can"));
-        WItemSlot itemSlot = WItemSlot.of(blockInventory, 0);
         WGridPanel rootPanel = new WGridPanel();
         
         this.setRootPanel(rootPanel);
         rootPanel.setSize(130, 130);
+        rootPanel.setInsets((Insets.ROOT_PANEL));
+    
+        WLabel title = new WLabel(new TranslatableText("block.ttc.trash_can"));
+        WItemSlot itemSlot = WItemSlot.of(blockInventory, 0);
         
         rootPanel.add(title, 3, 0);
         rootPanel.add(itemSlot, 4, 1);
@@ -37,27 +40,25 @@ public class TrashCanGuiDescription extends SyncedGuiDescription {
     }
     
     @Override
-    public ItemStack onSlotClick(int slotIndex, int button, SlotActionType action, PlayerEntity player) {
+    public void onSlotClick(int slotIndex, int button, SlotActionType action, PlayerEntity player) {
         Slot trashSlot = this.slots.get(0);
         boolean itemWasDeleted = false;
         
         if ((slotIndex == 0) && ((action == SlotActionType.PICKUP) & (button == 0))) {
-            itemWasDeleted = tryCursorDelete(trashSlot, player);
+            itemWasDeleted = tryCursorDelete(trashSlot);
         } else if ((action == SlotActionType.QUICK_MOVE) && (slotIndex != 0)) { // Shift-click.
             itemWasDeleted = tryQuickDelete(trashSlot, this.slots.get(slotIndex));
         }
         
         if (itemWasDeleted) {
             trashSlot.markDirty();
-            player.inventory.markDirty();
+            player.getInventory().markDirty();
             
             world.playSound(null, player.getBlockPos(),
                     SoundEvents.BLOCK_COMPOSTER_READY,
                     SoundCategory.PLAYERS, 0.5f, 0.8f);
-            
-            return ItemStack.EMPTY;
         } else {
-            return super.onSlotClick(slotIndex, button, action, player);
+            super.onSlotClick(slotIndex, button, action, player);
         }
     }
     
@@ -69,8 +70,8 @@ public class TrashCanGuiDescription extends SyncedGuiDescription {
                 SoundCategory.BLOCKS, 0.9f, 1.3f);
     }
     
-    private boolean tryCursorDelete(Slot trashSlot, PlayerEntity player) {
-        ItemStack cursorStack = player.inventory.getCursorStack();
+    private boolean tryCursorDelete(Slot trashSlot) {
+        ItemStack cursorStack = this.getCursorStack();
         ItemStack trashStack = trashSlot.getStack();
         
         if (cursorStack.isEmpty() | trashStack.isEmpty() |
@@ -78,10 +79,10 @@ public class TrashCanGuiDescription extends SyncedGuiDescription {
             return false;
         }
         
-        if (canStacksCombine(cursorStack, trashStack)) {
+        if (ItemStack.canCombine(cursorStack, trashStack)) {
             if (trashStack.getCount() >= trashStack.getMaxCount()) {
                 trashSlot.setStack(cursorStack);
-                player.inventory.setCursorStack(ItemStack.EMPTY);
+                this.setCursorStack(ItemStack.EMPTY);
                 
                 return true;
             }
@@ -94,14 +95,14 @@ public class TrashCanGuiDescription extends SyncedGuiDescription {
                 int remainder = combinedStackCount - maxStackCount;
                 
                 trashSlot.setStack(new ItemStack(stackItem, maxStackCount));
-                player.inventory.setCursorStack(new ItemStack(stackItem, remainder));
+                this.setCursorStack(new ItemStack(stackItem, remainder));
             }
             
             return false;
             
         } else {
             trashSlot.setStack(cursorStack);
-            player.inventory.setCursorStack(ItemStack.EMPTY);
+            this.setCursorStack(ItemStack.EMPTY);
             
             return true;
         }
@@ -116,7 +117,7 @@ public class TrashCanGuiDescription extends SyncedGuiDescription {
             return false;
         }
         
-        if (canStacksCombine(originStack, trashStack)) {
+        if (ItemStack.canCombine(originStack, trashStack)) {
             if (trashStack.getCount() >= trashStack.getMaxCount()) {
                 trashSlot.setStack(originStack);
                 originSlot.setStack(ItemStack.EMPTY);
